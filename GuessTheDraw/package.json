@@ -1,7 +1,7 @@
 {
-  "name": "shitty-chat",
-  "version": "0.0.0",
-  "description": "shittyChat",
+  "name": "Guess-The-Draw",
+  "version": "0.0.1",
+  "description": "GuessTheDraw",
   "main": "server.js",
   "author": {
     "name": "Pablo Garcia Ramon"
