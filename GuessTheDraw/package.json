@@ -1,0 +1,13 @@
+{
+  "name": "shitty-chat",
+  "version": "0.0.0",
+  "description": "shittyChat",
+  "main": "server.js",
+  "author": {
+    "name": "Pablo Garcia Ramon"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^3.0.3"
+  }
+}

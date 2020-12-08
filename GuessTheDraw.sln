@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "GuessTheDraw", "GuessTheDraw\GuessTheDraw.njsproj", "{85D48B5D-0D22-478D-B132-A100806C3552}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{85D48B5D-0D22-478D-B132-A100806C3552}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85D48B5D-0D22-478D-B132-A100806C3552}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85D48B5D-0D22-478D-B132-A100806C3552}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85D48B5D-0D22-478D-B132-A100806C3552}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41FACB17-8F03-401F-8374-973B8B5D7BC1}
+	EndGlobalSection
+EndGlobal
