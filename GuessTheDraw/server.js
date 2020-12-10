@@ -4,7 +4,7 @@ const port = 2000;
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-var PintuLogic = require('./pintulogic.js');
+var PintuLogic = require('./PintuLogic.js');
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
@@ -54,9 +54,16 @@ io.on('connection', (socket) => {   //merge this with the one on top
                     console.log('id: ' + id + '  -  lang: ' + lang);
                 }
                 console.log('test command executed');
-                //            var pintuGame = new PintuLogic(1, 'es');  //error its not a constructor or something like that
 
-                //pintuGame.beginGame();
+                var pintuGame1 = new PintuLogic(1, 'es');
+                var pintuGame2 = new PintuLogic(2, 'en');
+                var pintuGame3 = new PintuLogic(3, 'es');
+                var pintuGame4 = new PintuLogic(4, 'en');
+                pintuGame1.beginGame();
+                pintuGame2.beginGame();
+                pintuGame3.beginGame();
+                pintuGame4.beginGame();
+
             }
         } else {
             console.log("is not a command");

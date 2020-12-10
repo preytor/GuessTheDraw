@@ -7,40 +7,42 @@ class PintuLogic{
         console.log("pintulogic created");
     }
 
-    setId = function (id) {
+    setId(id) {
         this.id = id;
-    };
-
-    getId = function () {
-        return this.id;
-    };
-
-    setLang = function (lang) {
-        this.lang = lang;
-    };
-
-    getLang = function () {
-        return this.lang;
-    };
-
-    setSecretWord = function (secretWord) {
-        this.secretWord = secretWord;
-    };
-
-    getSecretWord = function () {
-        return this.secretWord;
-    };
-
-    beginGame = function () {
-        setSecretWord(selectSecretWord(this.lang));
-        console.log("secret word is " + secretWord);
     }
 
-    selectSecretWord = function () {
-        const words_en = ["home", "beach"];
-        const words_es = ["casa", "playa"];
+    getId() {
+        return this.id;
+    }
+
+    setLang(lang) {
+        this.lang = lang;
+    }
+
+    getLang() {
+        return this.lang;
+    }
+
+    setSecretWord(secretWord) {
+        this.secretWord = secretWord;
+    }
+
+    getSecretWord() {
+        return this.secretWord;
+    }
+
+    beginGame() {
+        this.setSecretWord(this.selectSecretWord(this.lang));
+        console.log("secret word for id " + this.getId() + " is " + this.getSecretWord());
+    }
+
+    selectSecretWord(lang) {
+        const words_en = ["home", "beach", "car", "table", "window", "cat", "chair"];
+        const words_es = ["casa", "playa", "coche", "mesa", "ventana", "gato", "silla"];
 
         var secretWord;
+
+
         switch (lang) {
             case 'en':
                 secretWord = words_en[Math.floor((Math.random() * words_en.length))];
