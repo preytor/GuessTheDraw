@@ -36,7 +36,6 @@
         }
 
         #messages {
-            width: auto;
             height: auto;
             list-style-type: none;
             margin: 0;
@@ -56,6 +55,18 @@
         form{
             margin-top: 50px;
         }
+
+        #chat{
+            float: left;
+            width: 30%;
+            border: 1px solid black;
+        }
+
+        canvas{
+            width: 50%;
+            height: 50%;
+            border: 2px dotted blue;
+        }
     </style>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -64,11 +75,25 @@
         window.addEventListener("load", inicio, false);
         var socket;
         var nickname;
+        var drawingCanvas;
 
         function inicio() {
             socket = io();
             nickname = prompt("whats your nickname?", "");
+            drawingCanvas = document.getElementById('drawingCanvas');
+            var content = drawingCanvas.getContext('2d');
+            drawingCanvas.addEventListener('mousedown', e => {
+                //document.write("x: "+e.offsetX);
+                //document.write("<br/>");
+                //document.write("y: " + e.offsetY);
+                content.beginPath();
+                content.arc(e.offsetX, e.offsetY, 5, 0, 2 * Math.PI);
+                content.stroke();
+
+                socket.emit('drawing', { posx: e.offsetX, posy: e.offsetY });
+            });
         }
+
 
         $(function () {
             $('form').submit(function (e) {
@@ -93,13 +118,23 @@
             socket.on('broadcast', function (message) {
                 $('#messages').append($('<li>').text(message));
             });
+
+            socket.on('drawing', function (draw) {
+                var content = drawingCanvas.getContext('2d');
+                content.beginPath();
+                content.arc(draw.posx, draw.posy, 5, 0, 2 * Math.PI);
+                content.stroke();
+            });
         });
     </script>
 </head>
     <body>
-        <ul id="messages"></ul>
-        <form action="">
-            <input id="m" autocomplete="off" /><button>Send</button>
-        </form>
+        <canvas id="drawingCanvas"></canvas>
+        <div id="chat">
+            <ul id="messages"></ul>
+            <form action="">
+                <input id="m" autocomplete="off" /><button>Send</button>
+            </form>
+        </div>
     </body>
 </html>
