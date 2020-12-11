@@ -86,14 +86,27 @@
                 //document.write("x: "+e.offsetX);
                 //document.write("<br/>");
                 //document.write("y: " + e.offsetY);
+                var mousePos = getMousePos(drawingCanvas, e);
+
                 content.beginPath();
-                content.arc(e.offsetX, e.offsetY, 5, 0, 2 * Math.PI);
+                content.arc(mousePos.x, mousePos.y, 5, 0, 2 * Math.PI);
                 content.stroke();
 
-                socket.emit('drawing', { posx: e.offsetX, posy: e.offsetY });
+                socket.emit('drawing', { posx: mousePos.x, posy: mousePos.y });
             });
         }
 
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+
+            scaleX = canvas.width / rect.width;
+            scaleY = canvas.height / rect.height;
+
+            return {
+                x: (evt.clientX - rect.left) * scaleX,
+                y: (evt.clientY - rect.top) * scaleY
+            };
+        }
 
         $(function () {
             $('form').submit(function (e) {
