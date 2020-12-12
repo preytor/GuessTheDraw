@@ -36,6 +36,12 @@ io.on('connection', (socket) => {
     });
 });
 
+io.on('connection', (socket) => {
+    socket.on('clear', (clear) => {
+        socket.broadcast.emit('clear', (clear));
+    });
+});
+
 io.on('connection', (socket) => {   //merge this with the one on top
     socket.on('chat message', (message) => {
         console.log(message);

@@ -67,6 +67,148 @@
             height: 50%;
             border: 2px dotted blue;
         }
+
+        .color {
+            border: 2px solid black;
+            width: 560px;
+            height: 112px;
+        }
+
+        .color div {
+            border: 1px solid black;
+            margin: 1px;
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+        }
+
+        #black {
+            background-color: black;
+        }
+
+        #darkgrey {
+            background-color: darkgrey;
+        }
+
+        #darkred {
+            background-color: darkred;
+        }
+
+        #red {
+            background-color: red;
+        }
+
+        #orange {
+            background-color: orange;
+        }
+
+        #yellow {
+            background-color: yellow;
+        }
+
+        #green {
+            background-color: green;
+        }
+
+        #deepskyblue {
+            background-color: deepskyblue;
+        }
+
+        #blue {
+            background-color: blue;
+        }
+
+        #blueviolet {
+            background-color: blueviolet;
+        }
+
+        #white {
+            background-color: white;
+        }
+
+        #lightgrey {
+            background-color: lightgrey;
+        }
+
+        #peru {
+            background-color: peru;
+        }
+
+        #pink {
+            background-color: pink;
+        }
+
+        #lightsalmon {
+            background-color: lightsalmon;
+        }
+
+        #lightyellow {
+            background-color: lightyellow;
+        }
+
+        #lightgreen {
+            background-color: lightgreen;
+        }
+
+        #lightcyan {
+            background-color: lightcyan;
+        }
+
+        #darkslategray {
+            background-color: darkslategray;
+        }
+
+        #thistle {
+            background-color: thistle;
+        }
+
+        .size {
+            border: 2px solid black;
+            width: 200px;
+            height: 120px;
+        }
+
+        .circleContainer {
+            border: 1px solid black;
+            width: 50px;
+            height: 50px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .circleContainer div {
+            position: absolute;
+            background-color: black;
+            border-radius: 50%;
+        }
+
+        #small {
+            top: 20px;
+            left: 20px;
+            width: 8px;
+            height: 8px;
+        }
+
+        #medium {
+            top: 12px;
+            left: 12px;
+            width: 25px;
+            height: 25px;
+        }
+
+        #big {
+            top: 4px;
+            left: 4px;
+            width: 40px;
+            height: 40px;
+        }
+
+        #clear {
+            border: 1px solid black;
+            width: 50px;
+            height: 50px;
+        }
+
     </style>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -76,23 +218,116 @@
         var socket;
         var nickname;
         var drawingCanvas;
+        var content;
+
+        var currentDraw = {
+            color: 'black',
+            width: 2
+        };
+
+        var isDrawing = false;
 
         function inicio() {
             socket = io();
             nickname = prompt("whats your nickname?", "");
             drawingCanvas = document.getElementById('drawingCanvas');
-            var content = drawingCanvas.getContext('2d');
-            drawingCanvas.addEventListener('mousedown', e => {
-                //document.write("x: "+e.offsetX);
-                //document.write("<br/>");
-                //document.write("y: " + e.offsetY);
-                var mousePos = getMousePos(drawingCanvas, e);
+            content = drawingCanvas.getContext('2d');
 
-                content.beginPath();
-                content.arc(mousePos.x, mousePos.y, 5, 0, 2 * Math.PI);
-                content.stroke();
+            var colorPicker = document.getElementsByClassName('color');
+            for (var i = 0; i < colorPicker.length; i++) {
+                colorPicker[i].addEventListener('click', changeColor);
+            }
 
-                socket.emit('drawing', { posx: mousePos.x, posy: mousePos.y });
+            var sizePicker = document.getElementsByClassName('circleContainer');
+            for (var i = 0; i < sizePicker.length; i++) {
+                sizePicker[i].addEventListener('click', changeSize);
+            }
+
+            var clearcanvas = document.getElementById('clear');
+            clearcanvas.addEventListener('click', function () { clearCanvas(true); });
+
+            drawingCanvas.addEventListener('mousedown', mouseDown);
+            drawingCanvas.addEventListener('mouseup', mouseUp);
+            drawingCanvas.addEventListener('mouseout', mouseUp);
+            drawingCanvas.addEventListener('mousemove', throttle(mouseMove, 10));
+            drawingCanvas.addEventListener('click', mouseClick);
+
+            //this is for phone
+            drawingCanvas.addEventListener('touchstart', mouseDown);
+            drawingCanvas.addEventListener('touchend', mouseUp);
+            drawingCanvas.addEventListener('touchcancel', mouseUp);
+            drawingCanvas.addEventListener('touchmove', throttle(mouseMove, 10));
+            drawingCanvas.addEventListener('touch', mouseClick);
+        }
+
+        function mouseDown(e) {
+            isDrawing = true;
+
+            var mousePos = getMousePos(drawingCanvas, e);
+
+            currentDraw.x = mousePos.x;
+            currentDraw.y = mousePos.y;
+        }
+
+        function mouseUp(e) {
+            if (!isDrawing) { return; }
+            isDrawing = false;
+
+            var mousePos = getMousePos(drawingCanvas, e);
+
+            drawLine(currentDraw.x, currentDraw.y, mousePos.x, mousePos.y, currentDraw.color, currentDraw.width, true);
+        }
+
+        function mouseMove(e) {
+            if (!isDrawing) { return; }
+
+            var mousePos = getMousePos(drawingCanvas, e);
+
+            drawLine(currentDraw.x, currentDraw.y, mousePos.x, mousePos.y, currentDraw.color, currentDraw.width, true);
+
+            currentDraw.x = mousePos.x;
+            currentDraw.y = mousePos.y;
+        }
+
+        function throttle(callback, delay) {
+            var previousCall = new Date().getTime();
+            return function () {
+                var time = new Date().getTime();
+
+                if ((time - previousCall) >= delay) {
+                    previousCall = time;
+                    callback.apply(null, arguments);
+                }
+            };
+        }
+
+        function mouseClick(e) {
+            if (isDrawing) { return; }
+
+            var mousePos = getMousePos(drawingCanvas, e);
+
+            drawLine(mousePos.x, mousePos.y, mousePos.x + currentDraw.width, mousePos.y + currentDraw.width, currentDraw.color, currentDraw.width, true);
+
+        }
+
+        function drawLine(x0, y0, x1, y1, color, width, emit) {
+            content.beginPath();
+            content.moveTo(x0, y0);
+            content.lineTo(x1, y1);
+            content.strokeStyle = color;
+            content.lineWidth = width;
+            content.stroke();
+            content.closePath();
+
+            if (!emit) { return; }
+
+            socket.emit('drawing', {
+                x0: x0,
+                y0: y0,
+                x1: x1,
+                y1: y1,
+                color: color,
+                width: width
             });
         }
 
@@ -103,9 +338,37 @@
             scaleY = canvas.height / rect.height;
 
             return {
-                x: (evt.clientX - rect.left) * scaleX,
-                y: (evt.clientY - rect.top) * scaleY
+                x: ((evt.clientX || e.touches[0].clientX) - rect.left) * scaleX,
+                y: ((evt.clientY || e.touches[0].clientY) - rect.top) * scaleY
             };
+        }
+
+        function changeColor(e) {
+            currentDraw.color = e.target.id;
+        }
+
+        function changeSize(e) {
+            var id = (e.target.firstElementChild) ? e.target.childNodes[0].id : e.target.id;
+            var value = 1;
+
+            switch (id) {
+                case "small":
+                    value = 1;
+                    break;
+                case "medium":
+                    value = 2;
+                    break;
+                case "big":
+                    value = 4;
+                    break;
+            }
+
+            currentDraw.width = value;
+        }
+
+        function clearCanvas(cleared) {
+            content.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+            if (cleared) socket.emit('clear', false);
         }
 
         $(function () {
@@ -122,32 +385,65 @@
                 $('#messages').append($('<li>').text(message.name + ': ' + message.msg));
                 $('#messages').animate({ scrollTop: $('#messages').prop("scrollHeight") }, 500);
             });
+
             socket.on('join', function (msg) {
                 $('#messages').append($('<li>').text(msg));
             });
+
             socket.on('left', function (msg) {
                 $('#messages').append($('<li>').text(msg));
             });
+
             socket.on('broadcast', function (message) {
                 $('#messages').append($('<li>').text(message));
             });
 
             socket.on('drawing', function (draw) {
-                var content = drawingCanvas.getContext('2d');
-                content.beginPath();
-                content.arc(draw.posx, draw.posy, 5, 0, 2 * Math.PI);
-                content.stroke();
+                drawLine(draw.x0, draw.y0, draw.x1, draw.y1, draw.color, draw.width, false);
+            });
+
+            socket.on('clear', function (clear) {
+                clearCanvas(clear);
             });
         });
     </script>
 </head>
-    <body>
-        <canvas id="drawingCanvas"></canvas>
-        <div id="chat">
-            <ul id="messages"></ul>
-            <form action="">
-                <input id="m" autocomplete="off" /><button>Send</button>
-            </form>
-        </div>
-    </body>
+<body>
+    <canvas id="drawingCanvas"></canvas>
+    <div id="chat">
+        <ul id="messages"></ul>
+        <form action="">
+            <input id="m" autocomplete="off"/><button>Send</button>
+        </form>
+    </div>
+    <div class="color">
+        <div id="black"></div>
+        <div id="darkgrey"></div>
+        <div id="darkred"></div>
+        <div id="red"></div>
+        <div id="orange"></div>
+        <div id="yellow"></div>
+        <div id="green"></div>
+        <div id="deepskyblue"></div>
+        <div id="blue"></div>
+        <div id="blueviolet"></div>
+
+        <div id="white"></div>
+        <div id="lightgrey"></div>
+        <div id="peru"></div>
+        <div id="pink"></div>
+        <div id="lightsalmon"></div>
+        <div id="lightyellow"></div>
+        <div id="lightgreen"></div>
+        <div id="lightcyan"></div>
+        <div id="darkslategray"></div>
+        <div id="thistle"></div>
+    </div>
+    <div class="size">
+        <div class="circleContainer"><div id="small"></div></div>
+        <div class="circleContainer"><div id="medium"></div></div>
+        <div class="circleContainer"><div id="big"></div></div>
+    </div>
+    <div id="clear"></div>
+</body>
 </html>
